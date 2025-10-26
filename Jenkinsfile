@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     echo "Running integration tests..."
-                    sh 'echo "Integration tests passed"'
+                    sh 'echo "this is the testttttttt"'
                 }
             }
         }
