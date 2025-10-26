@@ -22,7 +22,7 @@ pipeline {
         stage('Integration Tests') {
             steps {
                 script {
-                    echo "Running integration tests..."
+                    error ("Running integration tests...")
                     // Add your integration test commands here  
                     // sh 'npm run integration-test' or other commands
                     sh 'echo "Integration tests passed"'
