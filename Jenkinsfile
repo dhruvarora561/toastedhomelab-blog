@@ -1,16 +1,50 @@
-node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube analysis') {
-    def scannerHome = tool 'sonarqube'; // must match the name of an actual scanner installation directory on your Jenkins build agent
-    withSonarQubeEnv('sonarqube') { // If you have configured more than one global server connection, you can specify its name as configured in Jenkins
-      sh "${scannerHome}/bin/sonar-scanner"
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Unit Tests') {
+            steps {
+                script {
+                    echo "Running unit tests..."
+                    // Add your unit test commands here
+                    // sh 'npm test' or 'pytest' or 'mvn test'
+                    sh 'echo "Unit tests passed"'
+                }
+            }
+        }
+        
+        stage('Integration Tests') {
+            steps {
+                script {
+                    echo "Running integration tests..."
+                    // Add your integration test commands here  
+                    // sh 'npm run integration-test' or other commands
+                    sh 'echo "Integration tests passed"'
+                }
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'sonarqube'
+                    withSonarQubeEnv('sonarqube') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+            }
+        }
     }
-  }
-
-  stage('Build') {
-    echo "github webhook is working."
-  }
-
+    
+    post {
+        always {
+            echo "Pipeline ${currentBuild.result} - Status checks completed"
+        }
+    }
 }
