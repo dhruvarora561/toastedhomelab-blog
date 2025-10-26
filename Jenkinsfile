@@ -10,7 +10,7 @@ node {
   }
 
   stage('Build') {
-    echo "github webhook is working"
+    echo "github webhook is working."
   }
 
 }
