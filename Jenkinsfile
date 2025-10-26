@@ -1,3 +1,9 @@
+    triggers {
+        // This will appear after installing plugins
+        githubPush()
+        // or for pull requests:
+        pullRequest()
+    }
 node {
   stage('SCM') {
     checkout scm
