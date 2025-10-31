@@ -1,7 +1,9 @@
 pipeline {
     agent {label 'JenkinsVMUnraid'}
     
-    environment {
+        environment {
+        GEM_HOME = '/home/jenkins/.local/share/gem/ruby/3.2.0'
+        PATH = "$GEM_HOME/bin:$PATH"
         BUNDLE_PATH = '/home/jenkins/.bundle'
         JEKYLL_ENV = 'production'
     }
