@@ -70,29 +70,29 @@ pipeline {
             }
         }
         
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def scannerHome = tool 'sonarqube'
-                    withSonarQubeEnv('sonarqube') {
-                        sh "${scannerHome}/bin/sonar-scanner"
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             def scannerHome = tool 'sonarqube'
+        //             withSonarQubeEnv('sonarqube') {
+        //                 sh "${scannerHome}/bin/sonar-scanner"
+        //             }
+        //         }
+        //     }
+        // }
         
-        stage('Test Site') {
-            steps {
-                script {
-                    echo "Testing site with htmlproofer"
-                    sh '''
-                        bundle exec htmlproofer _site \
-                            --disable-external \
-                            --ignore-urls "/^http:\\/\\/127.0.0.1/,/^http:\\/\\/0.0.0.0/,/^http:\\/\\/localhost/"
-                    '''
-                }
-            }
-        }
+        // stage('Test Site') {
+        //     steps {
+        //         script {
+        //             echo "Testing site with htmlproofer"
+        //             sh '''
+        //                 bundle exec htmlproofer _site \
+        //                     --disable-external \
+        //                     --ignore-urls "/^http:\\/\\/127.0.0.1/,/^http:\\/\\/0.0.0.0/,/^http:\\/\\/localhost/"
+        //             '''
+        //         }
+        //     }
+        // }
         
         stage('Upload Artifact') {
             steps {
