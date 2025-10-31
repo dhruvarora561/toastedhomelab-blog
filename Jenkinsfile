@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'JenkinsVMUnraid'}
     
     stages {
         stage('Checkout') {
