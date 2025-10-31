@@ -1,6 +1,11 @@
 pipeline {
     agent {label 'JenkinsVMUnraid'}
     
+    environment {
+        BUNDLE_PATH = '/home/jenkins/.bundle'
+        JEKYLL_ENV = 'production'
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -8,22 +13,31 @@ pipeline {
             }
         }
         
-        stage('Setup Pages') {
+        stage('Setup Ruby Environment') {
             steps {
                 script {
-                    echo "Configuring pages environment"
-                    // Equivalent to actions/configure-pages@v4
+                    sh '''
+                        echo "Ruby version:"
+                        ruby --version
+                        echo "Gem version:"
+                        gem --version
+                        # Install bundler if not present
+                        gem install bundler
+                        echo "Bundler version:"
+                        bundle --version
+                    '''
                 }
             }
         }
         
-        stage('Setup Ruby') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    echo "Setting up Ruby 3.3 and bundler cache"
-                    // This would typically use a Ruby installation tool or Docker image
-                    sh 'ruby --version'
-                }
+                sh '''
+                    echo "Installing gem dependencies..."
+                    bundle install --jobs 4 --retry 3
+                    echo "Available gems:"
+                    bundle list
+                '''
             }
         }
         
@@ -31,8 +45,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Jekyll site"
-                    sh 'bundle exec jekyll b'
-                    env.JEKYLL_ENV = "production"
+                    sh 'bundle exec jekyll build --trace'
                 }
             }
         }
@@ -83,19 +96,7 @@ pipeline {
             steps {
                 script {
                     echo "Uploading site artifact"
-                    // Equivalent to actions/upload-pages-artifact@v3
                     archiveArtifacts artifacts: '_site/**', fingerprint: true
-                }
-            }
-        }
-        
-        stage('Deploy to GitHub Pages') {
-            steps {
-                script {
-                    echo "Deploying to nowhere"
-                    // This would require additional configuration for GitHub Pages deployment
-                    // Equivalent to actions/deploy-pages@v4
-                    sh 'ls -la'
                 }
             }
         }
@@ -103,18 +104,13 @@ pipeline {
     
     post {
         always {
-            echo "Pipeline ${currentBuild.result} - Build and deployment completed"
+            echo "Pipeline ${currentBuild.result} - Build completed"
         }
         success {
-            echo "Pipeline succeeded - Site deployed to nowhere"
+            echo "Pipeline succeeded - Site built successfully"
         }
         failure {
             echo "Pipeline failed - Check the logs for details"
         }
-    }
-    
-    options {
-        disableConcurrentBuilds()
-        timeout(time: 1, unit: 'HOURS')
     }
 }
